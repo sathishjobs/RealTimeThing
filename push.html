@@ -1,0 +1,182 @@
+<html>
+    <head>
+        <style>
+            button{
+                color:#00BCD4;
+            }
+        </style>
+       
+    </head>
+    <body style="text-align:center;color:#00BCD4;">
+
+            <br>
+            <br>
+             <br>
+            <br>
+             <br>
+            <br>
+             <br>
+            <br>
+             <br>
+            <br>
+             <br>
+            <br>
+            <h1 style="text-align:center;">Realtime Time Data</h1>
+
+            <button class="broadcastthis" value="0">Amazon Live Sales Report</button>
+            <button class="broadcastthis" value="1">Flipcart Live Sales Report</button>
+            <button class="broadcastthis" value="2">Ebay Live Sales Report</button>
+            <button class="broadcastthis" value="3">Simulate Random Report</button>
+
+                        <br><br><br>
+            
+                        <div class="addColors" style="text-align:center;">
+                             Add colors:
+                                
+                                    <input type="checkbox" value="#2ecc71" class="colorVal"  id="indeterminate-checkbox" />
+                                    <label style="color:#2ecc71" for="indeterminate-checkbox">#2ecc71</label>
+                                
+                                 
+                                    <input type="checkbox" value="#3498db" class="colorVal" id="indeterminate-checkbox1" />
+                                    <label style="color:#3498db" for="indeterminate-checkbox1">#3498db</label>
+                                
+                                
+
+                                    <input type="checkbox" value="#bdc3c7" class="colorVal" id="indeterminate-checkbox2" />
+                                    <label style="color:#bdc3c7"  for="indeterminate-checkbox2">#bdc3c7</label>
+                                
+                                    <input type="checkbox" value="#674c3c" class="colorVal" id="indeterminate-checkbox7" />
+                                    <label style="color:#674c3c"  for="indeterminate-checkbox7">#674c3c</label>
+
+                                    <input type="checkbox" value="#344956" class="colorVal" id="indeterminate-checkbox8" />
+                                    <label style="color:#344956"  for="indeterminate-checkbox8">#344956</label>
+
+
+                                    <input type="checkbox" value="#d35400" class="colorVal" id="indeterminate-checkbox9" />
+                                    <label style="color:#d35400"  for="indeterminate-checkbox9">#d35400</label>
+                                <br><br><br>
+                                <button style="text-align:center;" class="gnClr btn btn-default">
+                                    Change Chart Color 
+                                </button>
+
+                        </div>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script>
+            <script src="/socket.io/socket.io.js"></script>
+            <script>
+                jQuery(function($){
+
+                    var socket = io.connect();
+
+                    function realTimeConstructor(category,value){
+                        this.category = category;
+                        this.value    = value;
+                    }
+
+
+                    var realtimeData = [
+
+                        {
+                            name : "Amazon Live Sales Report",
+                            data :  [
+                                    { category: "", value: 0 },
+                                    { category: "Amazon Fashion", value: 12 },
+                                    { category: "Amazon Global Story", value: 13 },
+                                    { category: "Amazon pantry", value: 40 },
+                                    { category: "Appliance", value: 30 },
+                                    { category: "Apps & Games", value: 17 },
+                                    { category: "Baby", value: 15 },
+                                    { category: "Beauty", value: 29 },
+                                    { category: "Books", value: 19 },
+                                    { category: "Car&Mobile", value: 23 },
+                                    { category: "Personal Care", value: 22 },
+                                    { category: "Electronic", value: 19 }
+                                    ]
+                        },
+                        {
+                               
+                            name : "FlipCart Live Sales Report",
+                            data : [
+                                    { category: "", value: 0 },
+                                    { category: "Furniture", value: 10 },
+                                    { category: "Garden & outdoors", value: 16 },
+                                    { category: "Gifcards", value: 39 },
+                                    { category: "Grocery", value: 25 },
+                                    { category: "GourMetFoods", value: 22 },
+                                    { category: "Health", value: 16 },
+                                    { category: "Personal care", value: 39 },
+                                    { category: "Home", value: 11 },
+                                    { category: "Kitchen", value: 22 },
+                                    { category: "Industrial&Scientific", value: 24 },
+                                    { category: "Luggage Bags", value: 15 }
+                                    ]
+                        },
+                        {
+                               
+                            name : "Ebay Live Sales Report",
+                            data : [
+                                    { category: "", value: 0 },
+                                    { category: "Musical Instruments", value: 17 },
+                                    { category: "Office Products", value: 12 },
+                                    { category: "Pet Supplies", value: 37 },
+                                    { category: "Shoes", value: 30 },
+                                    { category: "HandBags", value: 17 },
+                                    { category: "Software", value: 15 },
+                                    { category: "Sports", value: 29 },
+                                    { category: "Fitness", value: 19 },
+                                    { category: "Jewellery", value: 23 },
+                                    { category: "Luggage Bage", value: 22 },
+                                    { category: "Movies", value: 19 }
+                                    ]
+                        }
+
+                    ]
+                    
+                    var InterValHolder;
+                    
+                    $(".broadcastthis").click(function(){
+
+                        //Stop the Simulation if it is running 
+                         var compare = $(this).text();
+                         if(compare=="Stop Random Report") {
+                               clearInterval(InterValHolder);
+                               $(this).text("Simulate Random Report");
+                            }
+                        console.log($(this).val())
+                        var index = $(this).val();
+                        if(index == 3){
+                            if(compare == "Simulate Random Report"){
+                                   $(this).text("Stop Random Report")
+                                   InterValHolder =  setInterval(()=>{
+                                   var generateRandom = (Math.floor((Math.random() * 3) + 1) -1);
+                                   socket.emit('sendData',realtimeData[generateRandom]);
+                                },3000)
+                                 console.log(InterValHolder);
+                            } 
+                            console.log($(this).text());
+                          
+                        }else {
+                            console.log(realtimeData[index]);
+                            socket.emit('sendData',realtimeData[index]);
+                        }
+                        
+                    })
+
+
+                    $('.gnClr').click(function(){
+                         var val = [];
+                         $(':checkbox:checked').each(function(i){
+                         val[i] = $(this).val();
+                         });
+                         console.log("generate clicked");
+                         socket.emit('changeColor',val);
+                    });
+
+
+                })
+
+            </script>
+
+
+    </body>
+</html>

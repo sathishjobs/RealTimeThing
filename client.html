@@ -1,0 +1,80 @@
+<html>
+    <head>
+        <style>
+            body{
+                color:#00BCD4;
+            }
+
+        </style>
+
+    </head>
+    <body>
+            <h1 style="text-align:center;color:#00BCD4;">Realtime Chart</h1>
+            <div style="text-align:center;" class="output">
+                
+            </div>
+
+             <div style="color:#00BCD4;" class="chart1">
+
+            </div>
+
+            <script src="jquery/dist/jquery.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+            <script src="/socket.io/socket.io.js"></script>
+            <script src="bar_d3_01.js"></script>
+            <script>
+                jQuery(function($){
+
+                 //Iniatialize the horizantal chart library 
+                 var chart1 = $$bar();
+
+                     var data = [
+                        { category: "", value: 0 },
+                        { category: "Shorts", value: 12 },
+                        { category: "Water Bottle", value: 13 },
+                        { category: "Cage", value: 40 },
+                        { category: "Sleeve", value: 30 },
+                        { category: "Tire", value: 17 },
+                        { category: "Fender", value: 15 },
+                        { category: "Vest", value: 29 },
+                        { category: "Car", value: 19 },
+                        { category: "cap", value: 23 },
+                        { category: "Bike", value: 22 },
+                        { category: "Sathish", value: 19 }
+                        ]
+
+                 //Initial chart rendering 
+                 chart1.fn_addColors(["yellow","orange","pink"])
+                       .fn_addStyle([{"width":900,"height":550}])
+                       .fn_barConfig(data,".chart1")
+                       .fn_draw();
+
+
+                    var socket = io.connect();
+
+                    $(".broadcastthis").click(function(){
+                        console.log($(this).val())
+                        socket.emit('sendData',$(this).val());
+                    })
+
+                    socket.on('needtochangedude',function(data){
+                        $(".output").html(data.name);
+                        console.log(data.data);
+                        chart1.fn_barConfig(data.data,".chart1")
+                        .fn_addAnimation({duration:1000,ease:"elastic"})
+                        .fn_draw();
+                    })
+
+
+                     socket.on('updateColor',function(data1){
+                            chart1.fn_addColors(data1)
+                            .fn_addAnimation({duration:1000,ease:"elastic"})
+                            .fn_draw();
+                    })
+
+
+                })
+
+            </script>
+    </body>
+</html>
